@@ -1,87 +1,113 @@
 window.onload = function(){
-
   var log = console.log;
-  var canvas = document.querySelector('canvas');
-  var ctx = canvas.getContext('2d');
 
-  var deg0   = (1.5 * Math.PI);
-  var deg90  = (0   * Math.PI);
-  var deg135  = (0.25   * Math.PI);
-  var deg180 = (0.5 * Math.PI);
-  var deg225 = (0.75 * Math.PI);
-  var deg270 = (1   * Math.PI);
-  var ticColor = '#fff';
-  var unfilledColor = '#d4d0c8';
-  var filledColor = '#2b8b43';
+  // requestAnimationFrame Shim
+  var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                              window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+  window.requestAnimationFrame = requestAnimationFrame;
 
-  var canvasSize = 600;
-  canvas.width = canvasSize;
-  canvas.height = canvasSize;
+  var CustomerGauge = {
+    canvas: document.querySelector('canvas'),
+    ticColor: '#fff',
+    unfilledColor: '#d4d0c8',
+    filledColor: '#4aae34',
+    canvasSize: 600,
+    radius: 150,
+    canvasCenter: null,
+    ctx: null,
+    unfilledStrokeWidth: 30,
+    filledStrokeWidth: 50,
+    setContext: function(){
+      this.ctx = this.canvas.getContext('2d');
+    },
+    setCanvasCenter: function(){
+      this.canvasCenter = this.canvasSize / 2
+    },
+    getRadianFromPercentage: function(percentValue){
+      var tickRange = 1.5;
+      var radianMultiplier = (tickRange * (percentValue * .01));
+      var zeroPercentRadianMultiplier = .75;
 
-  var x = canvasSize/2,
-  y = canvasSize/2,
-  radius = 150,
-      angleStart = deg225,
-      angleEnd = deg135,
-      filledStrokeWidth = 50;
+      return ((zeroPercentRadianMultiplier + radianMultiplier) * Math.PI);
+    },
+    drawUnfilledArc: function(){
+      this.arc(this.unfilledColor, this.unfilledStrokeWidth, this.radius - 10, this.getRadianFromPercentage(100));
+    },
+    drawFilledArc: function(){
+      this.arc(this.filledColor, this.filledStrokeWidth, this.radius, this.getRadianFromPercentage(100));
+    },
+    arc: function(color, width, radius, arcEnd){
+      this.ctx.beginPath();
+      this.ctx.arc(this.canvasCenter, this.canvasCenter, radius, this.getRadianFromPercentage(0), arcEnd);
+      this.ctx.strokeStyle = color;
+      this.ctx.lineWidth = width;
+      this.ctx.stroke();
+    },
+    drawTics: function(){
+      for(var i = 1; i <=10; i++){
+        var multiplier = (i * .15);
+        var startRadian = ((.75 + multiplier) * Math.PI);
+        var endRadian = ((.75 + multiplier + .01) * Math.PI);
 
-      var lineLength = radius + filledStrokeWidth;
+        this.ctx.beginPath();
+        this.ctx.arc(this.canvasCenter, this.canvasCenter,this.radius, startRadian, endRadian);
+        this.ctx.strokeStyle = this.ticColor;
+        this.ctx.lineWidth = this.filledStrokeWidth + 2;
+        this.ctx.stroke();
+      }
+    },
+    setupText: function(){
+      var countVerticalPos = this.canvasCenter - 20;
+      var topTextVerticalPos = countVerticalPos + 50;
+      var bottomTextVerticalPos = topTextVerticalPos + 22;
 
+      this.ctx.font = '88px serif';
+      this.ctx.textAlign = 'center';
+      this.ctx.fillStyle = '#0c9cd2';
+      this.ctx.textBaseline = 'middle';
+      this.ctx.fillText('6', this.canvasCenter, countVerticalPos);
 
-  //Draw circle
-  ctx.beginPath();
-  ctx.arc(x, x, radius, 0, 2*Math.PI, false);
-  ctx.lineWidth = 30;
-  ctx.strokeStyle = 'rgba(255,255,255, 0.2)'
-  ctx.stroke();
+      this.ctx.font = '20px serif';
+      this.ctx.textAlign = 'center';
+      this.ctx.fillStyle = '#000';
+      this.ctx.textBaseline = 'middle';
+      this.ctx.fillText('customers', this.canvasCenter, topTextVerticalPos);
 
-  //Draw arc full
-  ctx.beginPath();
-  ctx.arc(x, y, radius - 10, angleStart, angleEnd);
-  ctx.strokeStyle = unfilledColor;
-  ctx.lineWidth = 30;
-  ctx.stroke();
+      this.ctx.font = '20px serif';
+      this.ctx.textAlign = 'center';
+      this.ctx.fillStyle = '#000';
+      this.ctx.textBaseline = 'middle';
+      this.ctx.fillText('in 21 of 60 days', this.canvasCenter, bottomTextVerticalPos);
+    },
+    animate: function(currentPercent, endPercent){
+      log('animate: ' + currentPercent)
+      var self = this;
+      this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
+      this.drawUnfilledArc();
+      this.arc(this.filledColor, this.filledStrokeWidth, this.radius, this.getRadianFromPercentage(currentPercent));
+      this.drawTics();
+      this.setupText();
+      currentPercent++;
+      if (currentPercent <= endPercent) {
+        requestAnimationFrame(function () {
+          self.animate(currentPercent, endPercent)
+        });
+      }
+    },
 
-  //Draw arc full
-  ctx.beginPath();
-  ctx.arc(x, y, radius, angleStart, deg0);
-  ctx.strokeStyle = filledColor;
-  ctx.lineWidth = filledStrokeWidth;
-  ctx.stroke();
+    init: function(){
+      this.canvas.width = this.canvasSize;
+      this.canvas.height = this.canvasSize;
+      this.setContext();
+      this.setCanvasCenter();
+      this.drawUnfilledArc();
+      this.drawFilledArc();
+      this.drawTics();
+      this.setupText();
 
-  for(var i = 1; i <=10; i++){
-    var multiplier = (i * .15);
-    var startRadian = ((.75 + multiplier) * Math.PI);
-    var endRadian = ((.75 + multiplier + .01) * Math.PI);
+      this.animate(0, 90);
+    }
+  };
 
-    ctx.beginPath();
-    ctx.arc(x, y, radius, startRadian, endRadian);
-    ctx.strokeStyle = ticColor;
-    ctx.lineWidth = filledStrokeWidth + 2;
-    ctx.stroke();
-  }
-
-  var verticalCenter = canvasSize/2;
-  var countVerticalPos = verticalCenter - 20;
-  var topTextVerticalPos = countVerticalPos + 50;
-  var bottomTextVerticalPos = topTextVerticalPos + 22;
-
-  ctx.font = '88px serif';
-  ctx.textAlign = 'center';
-  ctx.fillStyle = '#0c9cd2';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('6', canvasSize/2, countVerticalPos);
-
-  ctx.font = '20px serif';
-  ctx.textAlign = 'center';
-  ctx.fillStyle = '#000';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('customers', canvasSize/2, topTextVerticalPos);
-
-  ctx.font = '20px serif';
-  ctx.textAlign = 'center';
-  ctx.fillStyle = '#000';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('in 21 of 60 days', canvasSize/2, bottomTextVerticalPos);
-
+  CustomerGauge.init();
 }
