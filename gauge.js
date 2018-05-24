@@ -11,7 +11,7 @@ window.onload = function(){
     ticColor: '#fff',
     unfilledColor: '#d4d0c8',
     filledColor: '#4aae34',
-    canvasSize: 600,
+    canvasSize: 800,
     radius: 150,
     canvasCenter: null,
     ctx: null,
@@ -54,9 +54,43 @@ window.onload = function(){
         this.ctx.strokeStyle = this.ticColor;
         this.ctx.lineWidth = this.filledStrokeWidth + 2;
         this.ctx.stroke();
+
+        // black tic
+        this.ctx.beginPath();
+        this.ctx.arc(this.canvasCenter, this.canvasCenter,this.radius, this.getRadianFromPercentage(10), this.getRadianFromPercentage(10.3));
+        this.ctx.strokeStyle = '#000';
+        this.ctx.stroke();
+
+        // end tic
+        this.ctx.beginPath();
+        this.ctx.arc(this.canvasCenter, this.canvasCenter,this.radius, this.getRadianFromPercentage(90.5), this.getRadianFromPercentage(90.8));
+        this.ctx.strokeStyle = '#8b8b8b';
+        this.ctx.stroke();
       }
     },
-    setupText: function(){
+    setupLabels: function(){
+      var lineLength = 200;
+      // setup black line
+      var yPos = this.canvasCenter + (this.radius/2.83);
+      var xPos = this.canvasCenter - this.radius - 18;//- (this.radius/2);
+      this.ctx.beginPath();
+      this.ctx.strokeStyle = '#000';
+      this.ctx.moveTo(xPos, yPos);
+      this.ctx.lineWidth = 3;
+      this.ctx.lineTo(xPos - lineLength, yPos);
+      this.ctx.stroke();
+
+      // setup black line
+      var yPos = this.canvasCenter + (this.radius/2.5);
+      var xPos = this.canvasCenter + this.radius + 16;//- (this.radius/2);
+      this.ctx.beginPath();
+      this.ctx.strokeStyle = '#8b8b8b';
+      this.ctx.moveTo(xPos, yPos);
+      this.ctx.lineWidth = 3;
+      this.ctx.lineTo(xPos + lineLength, yPos);
+      this.ctx.stroke();
+    },
+    setupText: function(customerCount){
       var countVerticalPos = this.canvasCenter - 20;
       var topTextVerticalPos = countVerticalPos + 50;
       var bottomTextVerticalPos = topTextVerticalPos + 22;
@@ -65,7 +99,7 @@ window.onload = function(){
       this.ctx.textAlign = 'center';
       this.ctx.fillStyle = '#0c9cd2';
       this.ctx.textBaseline = 'middle';
-      this.ctx.fillText('6', this.canvasCenter, countVerticalPos);
+      this.ctx.fillText(customerCount, this.canvasCenter, countVerticalPos);
 
       this.ctx.font = '20px serif';
       this.ctx.textAlign = 'center';
@@ -84,9 +118,10 @@ window.onload = function(){
       var self = this;
       this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
       this.drawUnfilledArc();
+      this.setupLabels();
       this.arc(this.filledColor, this.filledStrokeWidth, this.radius, this.getRadianFromPercentage(currentPercent));
       this.drawTics();
-      this.setupText();
+      this.setupText(currentPercent);
       currentPercent++;
       if (currentPercent <= endPercent) {
         requestAnimationFrame(function () {
@@ -105,7 +140,7 @@ window.onload = function(){
       this.drawTics();
       this.setupText();
 
-      this.animate(0, 90);
+      this.animate(0, 65);
     }
   };
 
