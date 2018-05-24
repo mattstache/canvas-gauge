@@ -63,7 +63,7 @@ window.onload = function(){
 
         // end tic
         this.ctx.beginPath();
-        this.ctx.arc(this.canvasCenter, this.canvasCenter,this.radius, this.getRadianFromPercentage(90.5), this.getRadianFromPercentage(90.8));
+        this.ctx.arc(this.canvasCenter, this.canvasCenter,this.radius, this.getRadianFromPercentage(99.7), this.getRadianFromPercentage(100));
         this.ctx.strokeStyle = '#8b8b8b';
         this.ctx.stroke();
       }
@@ -80,34 +80,64 @@ window.onload = function(){
       this.ctx.lineTo(xPos - lineLength, yPos);
       this.ctx.stroke();
 
-      // setup black line
-      var yPos = this.canvasCenter + (this.radius/2.5);
-      var xPos = this.canvasCenter + this.radius + 16;//- (this.radius/2);
+      this.ctx.font = "16px 'Open Sans', sans-serif";
+      this.ctx.textAlign = 'center';
+      this.ctx.fillStyle = '#8b8b8b';
+      this.ctx.textBaseline = 'middle';
+      this.ctx.fillText('Milestone 1', xPos - (lineLength/2), yPos + 15);
+
+      this.ctx.font = "22px 'Open Sans', sans-serif";
+      this.ctx.textAlign = 'center';
+      this.ctx.fillStyle = '#8b8b8b';
+      this.ctx.textBaseline = 'middle';
+      this.ctx.fillText('10 Customers', xPos - (lineLength/2), yPos + 35);
+
+      this.ctx.font = "32px FontAwesome";
+      this.ctx.textAlign = 'center';
+      this.ctx.fillStyle = this.filledColor;
+      this.ctx.textBaseline = 'middle';
+      this.ctx.fillText('\uf058', xPos - (lineLength/2), yPos - 20);
+
+      // setup dark gray line
+      var yPos = this.canvasCenter + (this.radius/1.21);
+      var xPos = this.canvasCenter + this.radius - 25;
       this.ctx.beginPath();
       this.ctx.strokeStyle = '#8b8b8b';
       this.ctx.moveTo(xPos, yPos);
       this.ctx.lineWidth = 3;
       this.ctx.lineTo(xPos + lineLength, yPos);
       this.ctx.stroke();
+
+      this.ctx.font = "16px 'Open Sans', sans-serif";
+      this.ctx.textAlign = 'center';
+      this.ctx.fillStyle = '#8b8b8b';
+      this.ctx.textBaseline = 'middle';
+      this.ctx.fillText('Milestone 2', xPos + (lineLength/2), yPos - 35);
+
+      this.ctx.font = "22px 'Open Sans', sans-serif";
+      this.ctx.textAlign = 'center';
+      this.ctx.fillStyle = '#8b8b8b';
+      this.ctx.textBaseline = 'middle';
+      this.ctx.fillText('100 Customers', xPos + (lineLength/2), yPos - 15);
     },
     setupText: function(customerCount){
       var countVerticalPos = this.canvasCenter - 20;
       var topTextVerticalPos = countVerticalPos + 50;
       var bottomTextVerticalPos = topTextVerticalPos + 22;
 
-      this.ctx.font = '88px serif';
+      this.ctx.font = "88px 'Open Sans', sans-serif";
       this.ctx.textAlign = 'center';
       this.ctx.fillStyle = '#0c9cd2';
       this.ctx.textBaseline = 'middle';
       this.ctx.fillText(customerCount, this.canvasCenter, countVerticalPos);
 
-      this.ctx.font = '20px serif';
+      this.ctx.font = "20px 'Open Sans', sans-serif";
       this.ctx.textAlign = 'center';
       this.ctx.fillStyle = '#000';
       this.ctx.textBaseline = 'middle';
       this.ctx.fillText('customers', this.canvasCenter, topTextVerticalPos);
 
-      this.ctx.font = '20px serif';
+      this.ctx.font = "20px 'Open Sans', sans-serif";
       this.ctx.textAlign = 'center';
       this.ctx.fillStyle = '#000';
       this.ctx.textBaseline = 'middle';
