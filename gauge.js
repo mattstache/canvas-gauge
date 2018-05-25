@@ -16,7 +16,7 @@ window.onload = function(){
     radius: 150,
     canvasCenter: {},
     ctx: null,
-    unfilledStrokeWidth: 30,
+    unfilledStrokeWidth: 45,
     filledStrokeWidth: 50,
     canvasSize: {},
     labelLineLength: 200,
@@ -41,7 +41,7 @@ window.onload = function(){
       return ((zeroPercentRadianMultiplier + radianMultiplier) * Math.PI);
     },
     drawUnfilledArc: function(){
-      this.arc(this.unfilledColor, this.unfilledStrokeWidth, this.radius - 10, this.getRadianFromPercentage(100));
+      this.arc(this.unfilledColor, this.unfilledStrokeWidth, this.radius - ((this.filledStrokeWidth - this.unfilledStrokeWidth)/2), this.getRadianFromPercentage(100));
     },
     drawFilledArc: function(){
       this.arc(this.filledColor, this.filledStrokeWidth, this.radius, this.getRadianFromPercentage(100));
