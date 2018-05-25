@@ -64,60 +64,79 @@ window.onload = function(){
         this.ctx.strokeStyle = this.ticColor;
         this.ctx.lineWidth = this.filledStrokeWidth + 2;
         this.ctx.stroke();
-
-        // black tic
-        this.ctx.beginPath();
-        this.ctx.arc(this.canvasCenter.x, this.canvasCenter.y,this.radius, this.getRadianFromPercentage(10), this.getRadianFromPercentage(10.3));
-        this.ctx.strokeStyle = '#000';
-        this.ctx.stroke();
-
-        // end tic
-        this.ctx.beginPath();
-        this.ctx.arc(this.canvasCenter.x, this.canvasCenter.y,this.radius, this.getRadianFromPercentage(99.7), this.getRadianFromPercentage(100));
-        this.ctx.strokeStyle = this.darkGray;
-        this.ctx.stroke();
       }
+
+      this.drawMilestoneTics();
+    },
+    drawMilestoneTics: function(){
+      // black tic
+      this.ctx.beginPath();
+      this.ctx.arc(this.canvasCenter.x, this.canvasCenter.y,this.radius, this.getRadianFromPercentage(10), this.getRadianFromPercentage(10.3));
+      this.ctx.strokeStyle = this.newAnimationPercent >= 10 ? '#000' : this.darkGray;
+      this.ctx.stroke();
+
+      // end tic
+      this.ctx.beginPath();
+      this.ctx.arc(this.canvasCenter.x, this.canvasCenter.y,this.radius, this.getRadianFromPercentage(99.7), this.getRadianFromPercentage(100));
+      this.ctx.strokeStyle = Math.ceil(this.newAnimationPercent) === 100 ? '#000' : this.darkGray;
+      this.ctx.stroke();
     },
     setupLabels: function(){
-      // setup black line
-      var yPos = this.canvasCenter.y + (this.radius/2.83);
-      var xPos = this.canvasCenter.x - this.radius - 18;//- (this.radius/2);
+      // setup milestone 1 line
+      var milestone1Achieved = this.newAnimationPercent >= 10;
+      var m1yPos = this.canvasCenter.y + (this.radius/2.83);
+      var m1xPos = this.canvasCenter.x - this.radius - 18;
       this.ctx.beginPath();
-      this.ctx.strokeStyle = '#000';
-      this.ctx.moveTo(xPos, yPos);
+      this.ctx.strokeStyle = milestone1Achieved ? '#000' : this.darkGray;
+      this.ctx.moveTo(m1xPos, m1yPos);
       this.ctx.lineWidth = 3;
-      this.ctx.lineTo(xPos - this.labelLineLength, yPos);
+      this.ctx.lineTo(m1xPos - this.labelLineLength, m1yPos);
       this.ctx.stroke();
 
-      this.ctx.font = "16px " + this.openSans;
-      this.ctx.fillStyle = this.darkGray;
-      this.ctx.fillText('Milestone 1', xPos - (this.labelLineLength/2), yPos + 15);
-
-      this.ctx.font = "22px " + this.openSans;
-      this.ctx.fillStyle = this.darkGray;
-      this.ctx.fillText('10 Customers', xPos - (this.labelLineLength/2), yPos + 35);
-
-      this.ctx.font = "32px FontAwesome";
-      this.ctx.fillStyle = this.filledColor;
-      this.ctx.fillText('\uf058', xPos - (this.labelLineLength/2), yPos - 20);
+      if(milestone1Achieved){
+        var m1IconFontSize = 32/(this.newAnimationPercent * .01);
+        console.log(m1IconFontSize)
+        this.ctx.font = m1IconFontSize + "px FontAwesome";
+        this.ctx.fillStyle = this.filledColor;
+        this.ctx.fillText('\uf058', m1xPos - (this.labelLineLength/2), m1yPos - 20);
+      }
 
       // setup dark gray line
-      var yPos = this.canvasCenter.y + (this.radius/1.21);
-      var xPos = this.canvasCenter.x + this.radius - 25;
+      var milestone2Achieved = Math.ceil(this.newAnimationPercent) === 100;
+      var m2yPos = this.canvasCenter.y + (this.radius/1.21);
+      var m2xPos = this.canvasCenter.x + this.radius - 25;
       this.ctx.beginPath();
-      this.ctx.strokeStyle = this.darkGray;
-      this.ctx.moveTo(xPos, yPos);
+      this.ctx.strokeStyle = milestone2Achieved ? '#000' : this.darkGray;
+      this.ctx.moveTo(m2xPos, m2yPos);
       this.ctx.lineWidth = 3;
-      this.ctx.lineTo(xPos + this.labelLineLength, yPos);
+      this.ctx.lineTo(m2xPos + this.labelLineLength, m2yPos);
       this.ctx.stroke();
 
+      if(milestone2Achieved){
+        var m2IconFontSize = 32/(this.newAnimationPercent * .01);
+        this.ctx.font = m2IconFontSize + "px FontAwesome";
+        this.ctx.fillStyle = this.filledColor;
+        this.ctx.fillText('\uf058', m2xPos + (this.labelLineLength/2), m2yPos - 60);
+      }
+
+      this.setupMilestoneLabels(m1xPos, m1yPos, m2xPos, m2yPos);
+    },
+    setupMilestoneLabels: function(m1xPos, m1yPos, m2xPos, m2yPos){
       this.ctx.font = "16px " + this.openSans;
       this.ctx.fillStyle = this.darkGray;
-      this.ctx.fillText('Milestone 2', xPos + (this.labelLineLength/2), yPos - 35);
+      this.ctx.fillText('Milestone 1', m1xPos - (this.labelLineLength/2), m1yPos + 15);
 
       this.ctx.font = "22px " + this.openSans;
       this.ctx.fillStyle = this.darkGray;
-      this.ctx.fillText('100 Customers', xPos + (this.labelLineLength/2), yPos - 15);
+      this.ctx.fillText('10 Customers', m1xPos - (this.labelLineLength/2), m1yPos + 35);
+
+      this.ctx.font = "16px " + this.openSans;
+      this.ctx.fillStyle = this.darkGray;
+      this.ctx.fillText('Milestone 2', m2xPos + (this.labelLineLength/2), m2yPos - 35);
+
+      this.ctx.font = "22px " + this.openSans;
+      this.ctx.fillStyle = this.darkGray;
+      this.ctx.fillText('100 Customers', m2xPos + (this.labelLineLength/2), m2yPos - 15);
     },
     setupText: function(customerCount){
       var countVerticalPos = this.canvasCenter.y - 20;
@@ -155,7 +174,6 @@ window.onload = function(){
         this.setupLabels();
 
         var x = this.easeInOutQuart(time, 0, endPercent - 0, this.duration);
-
         this.newAnimationPercent = x;
         this.arc(this.filledColor, this.filledStrokeWidth, this.radius, this.getRadianFromPercentage(this.newAnimationPercent));
 
@@ -165,7 +183,9 @@ window.onload = function(){
         requestAnimationFrame(function () {self.animate(endPercent)});
       }
     },
+    animateMilestone: function(){
 
+    },
     init: function(fillPercent, daysElapsed){
       this.setCanvasSize();
       this.daysElapsed = daysElapsed;
@@ -183,5 +203,5 @@ window.onload = function(){
   };
 
   // fillPercent, daysElapsed
-  CustomerGauge.init(85, 12);
+  CustomerGauge.init(100, 12);
 }
