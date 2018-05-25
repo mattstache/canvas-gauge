@@ -143,20 +143,33 @@ window.onload = function(){
       this.ctx.textBaseline = 'middle';
       this.ctx.fillText('in 21 of 60 days', this.canvasCenter, bottomTextVerticalPos);
     },
-    animate: function(currentPercent, endPercent){
-      log('animate: ' + currentPercent)
+    easeInOutQuart: function(t, b, c, d) {
+      if ((t /= d / 2) < 1) return c / 2 * t * t * t * t + b;
+      return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
+    },
+    newAnimationPercent: 0,
+    runAnimation: function(){
+      this.duration = 2000;
+      this.start = new Date().getTime();
+      this.animate(100);
+    },
+    animate: function(endPercent){
       var self = this;
-      this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
-      this.drawUnfilledArc();
-      this.setupLabels();
-      this.arc(this.filledColor, this.filledStrokeWidth, this.radius, this.getRadianFromPercentage(currentPercent));
-      this.drawTics();
-      this.setupText(currentPercent);
-      currentPercent++;
-      if (currentPercent <= endPercent) {
-        requestAnimationFrame(function () {
-          self.animate(currentPercent, endPercent)
-        });
+      var time = new Date().getTime() - this.start;
+      if (time <= this.duration) {
+        this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
+        this.drawUnfilledArc();
+        this.setupLabels();
+
+        var x = this.easeInOutQuart(time, 0, endPercent - 0, this.duration);
+
+        this.newAnimationPercent = x;
+        this.arc(this.filledColor, this.filledStrokeWidth, this.radius, this.getRadianFromPercentage(this.newAnimationPercent));
+
+        this.drawTics();
+        this.setupText(Math.ceil(this.newAnimationPercent));
+
+        requestAnimationFrame(function () {self.animate(endPercent)});
       }
     },
 
@@ -170,7 +183,7 @@ window.onload = function(){
       this.drawTics();
       this.setupText();
 
-      this.animate(0, 65);
+      this.runAnimation();
     }
   };
 
