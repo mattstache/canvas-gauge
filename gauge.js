@@ -12,6 +12,7 @@ window.onload = function(){
     unfilledColor: '#d4d0c8',
     filledColor: '#4aae34',
     darkGray: '#8b8b8b',
+    openSans: "'Open Sans', sans-serif",
     radius: 150,
     canvasCenter: {},
     ctx: null,
@@ -25,6 +26,9 @@ window.onload = function(){
     },
     setContext: function(){
       this.ctx = this.canvas.getContext('2d');
+
+      this.ctx.textBaseline = 'middle';
+      this.ctx.textAlign = 'center';
     },
     setCanvasCenter: function(){
       this.canvasCenter = {x:this.canvasSize.width / 2, y:this.canvasSize.height / 2};
@@ -85,22 +89,16 @@ window.onload = function(){
       this.ctx.lineTo(xPos - this.labelLineLength, yPos);
       this.ctx.stroke();
 
-      this.ctx.font = "16px 'Open Sans', sans-serif";
-      this.ctx.textAlign = 'center';
+      this.ctx.font = "16px " + this.openSans;
       this.ctx.fillStyle = this.darkGray;
-      this.ctx.textBaseline = 'middle';
       this.ctx.fillText('Milestone 1', xPos - (this.labelLineLength/2), yPos + 15);
 
-      this.ctx.font = "22px 'Open Sans', sans-serif";
-      this.ctx.textAlign = 'center';
-      this.ctx.fillStyle = '#8b8b8b';
-      this.ctx.textBaseline = 'middle';
+      this.ctx.font = "22px " + this.openSans;
+      this.ctx.fillStyle = this.darkGray;
       this.ctx.fillText('10 Customers', xPos - (this.labelLineLength/2), yPos + 35);
 
       this.ctx.font = "32px FontAwesome";
-      this.ctx.textAlign = 'center';
       this.ctx.fillStyle = this.filledColor;
-      this.ctx.textBaseline = 'middle';
       this.ctx.fillText('\uf058', xPos - (this.labelLineLength/2), yPos - 20);
 
       // setup dark gray line
@@ -113,16 +111,12 @@ window.onload = function(){
       this.ctx.lineTo(xPos + this.labelLineLength, yPos);
       this.ctx.stroke();
 
-      this.ctx.font = "16px 'Open Sans', sans-serif";
-      this.ctx.textAlign = 'center';
+      this.ctx.font = "16px " + this.openSans;
       this.ctx.fillStyle = this.darkGray;
-      this.ctx.textBaseline = 'middle';
       this.ctx.fillText('Milestone 2', xPos + (this.labelLineLength/2), yPos - 35);
 
-      this.ctx.font = "22px 'Open Sans', sans-serif";
-      this.ctx.textAlign = 'center';
+      this.ctx.font = "22px " + this.openSans;
       this.ctx.fillStyle = this.darkGray;
-      this.ctx.textBaseline = 'middle';
       this.ctx.fillText('100 Customers', xPos + (this.labelLineLength/2), yPos - 15);
     },
     setupText: function(customerCount){
@@ -130,23 +124,17 @@ window.onload = function(){
       var topTextVerticalPos = countVerticalPos + 50;
       var bottomTextVerticalPos = topTextVerticalPos + 22;
 
-      this.ctx.font = "88px 'Open Sans', sans-serif";
-      this.ctx.textAlign = 'center';
+      this.ctx.font = "88px " + this.openSans;
       this.ctx.fillStyle = '#0c9cd2';
-      this.ctx.textBaseline = 'middle';
       this.ctx.fillText(customerCount, this.canvasCenter.x, countVerticalPos);
 
-      this.ctx.font = "20px 'Open Sans', sans-serif";
-      this.ctx.textAlign = 'center';
+      this.ctx.font = "20px " + this.openSans;
       this.ctx.fillStyle = '#000';
-      this.ctx.textBaseline = 'middle';
       this.ctx.fillText('customers', this.canvasCenter.x, topTextVerticalPos);
 
-      this.ctx.font = "20px 'Open Sans', sans-serif";
-      this.ctx.textAlign = 'center';
+      this.ctx.font = "20px " + this.openSans;
       this.ctx.fillStyle = '#000';
-      this.ctx.textBaseline = 'middle';
-      this.ctx.fillText('in 21 of 60 days', this.canvasCenter.x, bottomTextVerticalPos);
+      this.ctx.fillText('in ' + this.daysElapsed + ' of 60 days', this.canvasCenter.x, bottomTextVerticalPos);
     },
     easeInOutQuart: function(t, b, c, d) {
       if ((t /= d / 2) < 1) return c / 2 * t * t * t * t + b;
@@ -178,8 +166,9 @@ window.onload = function(){
       }
     },
 
-    init: function(fillPercent){
+    init: function(fillPercent, daysElapsed){
       this.setCanvasSize();
+      this.daysElapsed = daysElapsed;
       this.canvas.width = this.canvasSize.width;
       this.canvas.height = this.canvasSize.height;
       this.setContext();
@@ -193,5 +182,6 @@ window.onload = function(){
     }
   };
 
-  CustomerGauge.init(85);
+  // fillPercent, daysElapsed
+  CustomerGauge.init(85, 12);
 }
