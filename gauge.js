@@ -11,17 +11,23 @@ window.onload = function(){
     ticColor: '#fff',
     unfilledColor: '#d4d0c8',
     filledColor: '#4aae34',
-    canvasSize: 800,
+    darkGray: '#8b8b8b',
     radius: 150,
-    canvasCenter: null,
+    canvasCenter: {},
     ctx: null,
     unfilledStrokeWidth: 30,
     filledStrokeWidth: 50,
+    canvasSize: {},
+    labelLineLength: 200,
+    setCanvasSize: function(){
+      this.canvasSize.height = ((this.radius) + (this.filledStrokeWidth * 4));
+      this.canvasSize.width = ((this.radius) + (this.filledStrokeWidth * 4) + (this.labelLineLength * 2));
+    },
     setContext: function(){
       this.ctx = this.canvas.getContext('2d');
     },
     setCanvasCenter: function(){
-      this.canvasCenter = this.canvasSize / 2
+      this.canvasCenter = {x:this.canvasSize.width / 2, y:this.canvasSize.height / 2};
     },
     getRadianFromPercentage: function(percentValue){
       var tickRange = 1.5;
@@ -38,7 +44,7 @@ window.onload = function(){
     },
     arc: function(color, width, radius, arcEnd){
       this.ctx.beginPath();
-      this.ctx.arc(this.canvasCenter, this.canvasCenter, radius, this.getRadianFromPercentage(0), arcEnd);
+      this.ctx.arc(this.canvasCenter.x, this.canvasCenter.y, radius, this.getRadianFromPercentage(0), arcEnd);
       this.ctx.strokeStyle = color;
       this.ctx.lineWidth = width;
       this.ctx.stroke();
@@ -50,78 +56,77 @@ window.onload = function(){
         var endRadian = ((.75 + multiplier + .01) * Math.PI);
 
         this.ctx.beginPath();
-        this.ctx.arc(this.canvasCenter, this.canvasCenter,this.radius, startRadian, endRadian);
+        this.ctx.arc(this.canvasCenter.x, this.canvasCenter.y,this.radius, startRadian, endRadian);
         this.ctx.strokeStyle = this.ticColor;
         this.ctx.lineWidth = this.filledStrokeWidth + 2;
         this.ctx.stroke();
 
         // black tic
         this.ctx.beginPath();
-        this.ctx.arc(this.canvasCenter, this.canvasCenter,this.radius, this.getRadianFromPercentage(10), this.getRadianFromPercentage(10.3));
+        this.ctx.arc(this.canvasCenter.x, this.canvasCenter.y,this.radius, this.getRadianFromPercentage(10), this.getRadianFromPercentage(10.3));
         this.ctx.strokeStyle = '#000';
         this.ctx.stroke();
 
         // end tic
         this.ctx.beginPath();
-        this.ctx.arc(this.canvasCenter, this.canvasCenter,this.radius, this.getRadianFromPercentage(99.7), this.getRadianFromPercentage(100));
-        this.ctx.strokeStyle = '#8b8b8b';
+        this.ctx.arc(this.canvasCenter.x, this.canvasCenter.y,this.radius, this.getRadianFromPercentage(99.7), this.getRadianFromPercentage(100));
+        this.ctx.strokeStyle = this.darkGray;
         this.ctx.stroke();
       }
     },
     setupLabels: function(){
-      var lineLength = 200;
       // setup black line
-      var yPos = this.canvasCenter + (this.radius/2.83);
-      var xPos = this.canvasCenter - this.radius - 18;//- (this.radius/2);
+      var yPos = this.canvasCenter.y + (this.radius/2.83);
+      var xPos = this.canvasCenter.x - this.radius - 18;//- (this.radius/2);
       this.ctx.beginPath();
       this.ctx.strokeStyle = '#000';
       this.ctx.moveTo(xPos, yPos);
       this.ctx.lineWidth = 3;
-      this.ctx.lineTo(xPos - lineLength, yPos);
+      this.ctx.lineTo(xPos - this.labelLineLength, yPos);
       this.ctx.stroke();
 
       this.ctx.font = "16px 'Open Sans', sans-serif";
       this.ctx.textAlign = 'center';
-      this.ctx.fillStyle = '#8b8b8b';
+      this.ctx.fillStyle = this.darkGray;
       this.ctx.textBaseline = 'middle';
-      this.ctx.fillText('Milestone 1', xPos - (lineLength/2), yPos + 15);
+      this.ctx.fillText('Milestone 1', xPos - (this.labelLineLength/2), yPos + 15);
 
       this.ctx.font = "22px 'Open Sans', sans-serif";
       this.ctx.textAlign = 'center';
       this.ctx.fillStyle = '#8b8b8b';
       this.ctx.textBaseline = 'middle';
-      this.ctx.fillText('10 Customers', xPos - (lineLength/2), yPos + 35);
+      this.ctx.fillText('10 Customers', xPos - (this.labelLineLength/2), yPos + 35);
 
       this.ctx.font = "32px FontAwesome";
       this.ctx.textAlign = 'center';
       this.ctx.fillStyle = this.filledColor;
       this.ctx.textBaseline = 'middle';
-      this.ctx.fillText('\uf058', xPos - (lineLength/2), yPos - 20);
+      this.ctx.fillText('\uf058', xPos - (this.labelLineLength/2), yPos - 20);
 
       // setup dark gray line
-      var yPos = this.canvasCenter + (this.radius/1.21);
-      var xPos = this.canvasCenter + this.radius - 25;
+      var yPos = this.canvasCenter.y + (this.radius/1.21);
+      var xPos = this.canvasCenter.x + this.radius - 25;
       this.ctx.beginPath();
-      this.ctx.strokeStyle = '#8b8b8b';
+      this.ctx.strokeStyle = this.darkGray;
       this.ctx.moveTo(xPos, yPos);
       this.ctx.lineWidth = 3;
-      this.ctx.lineTo(xPos + lineLength, yPos);
+      this.ctx.lineTo(xPos + this.labelLineLength, yPos);
       this.ctx.stroke();
 
       this.ctx.font = "16px 'Open Sans', sans-serif";
       this.ctx.textAlign = 'center';
-      this.ctx.fillStyle = '#8b8b8b';
+      this.ctx.fillStyle = this.darkGray;
       this.ctx.textBaseline = 'middle';
-      this.ctx.fillText('Milestone 2', xPos + (lineLength/2), yPos - 35);
+      this.ctx.fillText('Milestone 2', xPos + (this.labelLineLength/2), yPos - 35);
 
       this.ctx.font = "22px 'Open Sans', sans-serif";
       this.ctx.textAlign = 'center';
-      this.ctx.fillStyle = '#8b8b8b';
+      this.ctx.fillStyle = this.darkGray;
       this.ctx.textBaseline = 'middle';
-      this.ctx.fillText('100 Customers', xPos + (lineLength/2), yPos - 15);
+      this.ctx.fillText('100 Customers', xPos + (this.labelLineLength/2), yPos - 15);
     },
     setupText: function(customerCount){
-      var countVerticalPos = this.canvasCenter - 20;
+      var countVerticalPos = this.canvasCenter.y - 20;
       var topTextVerticalPos = countVerticalPos + 50;
       var bottomTextVerticalPos = topTextVerticalPos + 22;
 
@@ -129,35 +134,35 @@ window.onload = function(){
       this.ctx.textAlign = 'center';
       this.ctx.fillStyle = '#0c9cd2';
       this.ctx.textBaseline = 'middle';
-      this.ctx.fillText(customerCount, this.canvasCenter, countVerticalPos);
+      this.ctx.fillText(customerCount, this.canvasCenter.x, countVerticalPos);
 
       this.ctx.font = "20px 'Open Sans', sans-serif";
       this.ctx.textAlign = 'center';
       this.ctx.fillStyle = '#000';
       this.ctx.textBaseline = 'middle';
-      this.ctx.fillText('customers', this.canvasCenter, topTextVerticalPos);
+      this.ctx.fillText('customers', this.canvasCenter.x, topTextVerticalPos);
 
       this.ctx.font = "20px 'Open Sans', sans-serif";
       this.ctx.textAlign = 'center';
       this.ctx.fillStyle = '#000';
       this.ctx.textBaseline = 'middle';
-      this.ctx.fillText('in 21 of 60 days', this.canvasCenter, bottomTextVerticalPos);
+      this.ctx.fillText('in 21 of 60 days', this.canvasCenter.x, bottomTextVerticalPos);
     },
     easeInOutQuart: function(t, b, c, d) {
       if ((t /= d / 2) < 1) return c / 2 * t * t * t * t + b;
       return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
     },
     newAnimationPercent: 0,
-    runAnimation: function(){
-      this.duration = 2000;
+    runAnimation: function(fillPercent){
+      this.duration = 1500;
       this.start = new Date().getTime();
-      this.animate(100);
+      this.animate(fillPercent);
     },
     animate: function(endPercent){
       var self = this;
       var time = new Date().getTime() - this.start;
       if (time <= this.duration) {
-        this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
+        this.ctx.clearRect(0, 0, this.canvasSize.width, this.canvasSize.height);
         this.drawUnfilledArc();
         this.setupLabels();
 
@@ -173,9 +178,10 @@ window.onload = function(){
       }
     },
 
-    init: function(){
-      this.canvas.width = this.canvasSize;
-      this.canvas.height = this.canvasSize;
+    init: function(fillPercent){
+      this.setCanvasSize();
+      this.canvas.width = this.canvasSize.width;
+      this.canvas.height = this.canvasSize.height;
       this.setContext();
       this.setCanvasCenter();
       this.drawUnfilledArc();
@@ -183,9 +189,9 @@ window.onload = function(){
       this.drawTics();
       this.setupText();
 
-      this.runAnimation();
+      this.runAnimation(fillPercent);
     }
   };
 
-  CustomerGauge.init();
+  CustomerGauge.init(85);
 }

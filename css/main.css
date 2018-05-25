@@ -1,4 +1,7 @@
 body {
   font-family: 'Open Sans', sans-serif; }
 
+canvas {
+  border: solid 1px red; }
+
 /*# sourceMappingURL=main.css.map */
