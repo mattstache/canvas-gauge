@@ -19,7 +19,7 @@ window.onload = function(){
     unfilledStrokeWidth: 45,
     filledStrokeWidth: 50,
     canvasSize: {},
-    labelLineLength: 200,
+    labelLineLength: 170,
     setCanvasSize: function(){
       this.canvasSize.height = ((this.radius) + (this.filledStrokeWidth * 4));
       this.canvasSize.width = ((this.radius) + (this.filledStrokeWidth * 4) + (this.labelLineLength * 2));
@@ -31,7 +31,8 @@ window.onload = function(){
       this.ctx.textAlign = 'center';
     },
     setCanvasCenter: function(){
-      this.canvasCenter = {x:this.canvasSize.width / 2, y:this.canvasSize.height / 2};
+      this.canvasCenter = {x:this.canvasSize.width / 2, y:((this.canvasSize.height / 2) + (this.filledStrokeWidth/3))};
+      //this.canvasCenter = {x:this.canvasSize.width / 2, y:this.canvasSize.height / 2};
     },
     getRadianFromPercentage: function(percentValue){
       var tickRange = 1.5;
@@ -69,23 +70,27 @@ window.onload = function(){
       this.drawMilestoneTics();
     },
     drawMilestoneTics: function(){
+      var additionalTicLength = 30;
+      var milestoneTicRadius = this.radius + (additionalTicLength/2);
       // black tic
       this.ctx.beginPath();
-      this.ctx.arc(this.canvasCenter.x, this.canvasCenter.y,this.radius, this.getRadianFromPercentage(10), this.getRadianFromPercentage(10.3));
+      this.ctx.arc(this.canvasCenter.x, this.canvasCenter.y,milestoneTicRadius, this.getRadianFromPercentage(10), this.getRadianFromPercentage(10.3));
       this.ctx.strokeStyle = this.newAnimationPercent >= 10 ? '#000' : this.darkGray;
+      this.ctx.lineWidth = this.filledStrokeWidth + additionalTicLength;
       this.ctx.stroke();
 
       // end tic
       this.ctx.beginPath();
-      this.ctx.arc(this.canvasCenter.x, this.canvasCenter.y,this.radius, this.getRadianFromPercentage(99.7), this.getRadianFromPercentage(100));
+      this.ctx.arc(this.canvasCenter.x, this.canvasCenter.y,milestoneTicRadius, this.getRadianFromPercentage(99.7), this.getRadianFromPercentage(100));
       this.ctx.strokeStyle = Math.ceil(this.newAnimationPercent) === 100 ? '#000' : this.darkGray;
+      this.ctx.lineWidth = this.filledStrokeWidth + additionalTicLength;
       this.ctx.stroke();
     },
     drawMilestoneLinesAndLabels: function(){
       // setup milestone 1 line
       var milestone1Achieved = this.newAnimationPercent >= 10;
-      this.m1yPos = this.canvasCenter.y + (this.radius/2.83);
-      this.m1xPos = this.canvasCenter.x - this.radius - 18;
+      this.m1yPos = this.canvasCenter.y + (this.radius/2.42);
+      this.m1xPos = this.canvasCenter.x - this.radius - 44;
       this.ctx.beginPath();
       this.ctx.strokeStyle = milestone1Achieved ? '#000' : this.darkGray;
       this.ctx.moveTo(this.m1xPos, this.m1yPos);
@@ -95,8 +100,8 @@ window.onload = function(){
 
       // setup dark gray line
       var milestone2Achieved = Math.ceil(this.newAnimationPercent) === 100;
-      this.m2yPos = this.canvasCenter.y + (this.radius/1.21);
-      this.m2xPos = this.canvasCenter.x + this.radius - 25;
+      this.m2yPos = this.canvasCenter.y + (this.radius/1.04);
+      this.m2xPos = this.canvasCenter.x + this.radius - 5;
       this.ctx.beginPath();
       this.ctx.strokeStyle = milestone2Achieved ? '#000' : this.darkGray;
       this.ctx.moveTo(this.m2xPos, this.m2yPos);
@@ -107,13 +112,14 @@ window.onload = function(){
       this.drawMilestoneLabels();
     },
     drawMilestoneLabels: function(){
+      var newM1xPos = this.m1xPos - (this.labelLineLength/2) + 10;
       this.ctx.font = "16px " + this.openSans;
       this.ctx.fillStyle = this.darkGray;
-      this.ctx.fillText('Milestone 1', this.m1xPos - (this.labelLineLength/2), this.m1yPos + 15);
+      this.ctx.fillText('Milestone 1', newM1xPos, this.m1yPos + 15);
 
       this.ctx.font = "22px " + this.openSans;
       this.ctx.fillStyle = this.darkGray;
-      this.ctx.fillText('10 Customers', this.m1xPos - (this.labelLineLength/2), this.m1yPos + 35);
+      this.ctx.fillText('10 Customers', newM1xPos, this.m1yPos + 35);
 
       this.ctx.font = "16px " + this.openSans;
       this.ctx.fillStyle = this.darkGray;
@@ -144,6 +150,21 @@ window.onload = function(){
       if ((t /= d / 2) < 1) return c / 2 * t * t * t * t + b;
       return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
     },
+    easeOutElastic: function (t, b, c, d) {
+        var s=1.70158;
+        var p=0;
+        var a=c;
+        if (t==0) return b;  
+        if ((t/=d)==1) return b+c;  
+        if (!p) p=d*.3;
+        if (a < Math.abs(c)) {
+            a=c; 
+            var s=p/4; 
+        }else{
+            var s = p/(2*Math.PI) * Math.asin (c/a);
+        }
+        return a*Math.pow(2,-10*t) * Math.sin( (t*d-s)*(2*Math.PI)/p ) + c + b;
+    },
     newAnimationPercent: 0,
 
     animateArc: function(endPercent){
@@ -160,14 +181,14 @@ window.onload = function(){
 
     setupMilestone1IconAnimation: function(){
         var self = this;
-      
+
         if(typeof this.iconAnimationStartTime === 'undefined'){
           this.iconAnimationStartTime = new Date().getTime();
         }
         var time = new Date().getTime() - this.iconAnimationStartTime;
         if (time <= this.iconDuration) {
-          var x = this.easeInOutQuart(time, 0, 1, this.iconDuration);
-          var m1IconFontSize = Math.ceil(32/(x));
+          var x = this.easeOutElastic(time, 10, 20, this.iconDuration);
+          var m1IconFontSize = Math.ceil(32/(32/x));
           self.m1IconFontSize = m1IconFontSize;
           this.milestone1AnimationStarted = true;
         }else{
@@ -182,8 +203,8 @@ window.onload = function(){
         }
         var time = new Date().getTime() - this.icon2AnimationStartTime;
         if (time <= this.iconDuration) {
-          var x = this.easeInOutQuart(time, 0, 1, this.iconDuration);
-          var m2IconFontSize = Math.ceil(32/(x));
+          var x = this.easeOutElastic(time, 10, 20, this.iconDuration);
+          var m2IconFontSize = Math.ceil(32/(32/x));
           self.m2IconFontSize = m2IconFontSize;
           this.milestone2AnimationStarted = true;
         }else{
@@ -206,7 +227,7 @@ window.onload = function(){
       this.duration = 1500;
       this.start = new Date().getTime();
 
-      this.iconDuration = 2000;
+      this.iconDuration = 1200;
       this.endPercent = fillPercent;
       this.runAnimation(fillPercent);
     },
@@ -247,7 +268,7 @@ window.onload = function(){
     drawMilestone1Icon: function(){
       this.ctx.font = this.m1IconFontSize + "px FontAwesome";
       this.ctx.fillStyle = this.filledColor;
-      this.ctx.fillText('\uf058', this.m1xPos - (this.labelLineLength/2), this.m1yPos - 20);
+      this.ctx.fillText('\uf058', this.m1xPos - (this.labelLineLength/2) + 10, this.m1yPos - 20);
     },
     drawMilestone2Icon: function(){
       this.ctx.font = this.m2IconFontSize + "px FontAwesome";
