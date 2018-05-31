@@ -3,7 +3,7 @@ window.onload = function(){
 
   // requestAnimationFrame Shim
   var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
-                              window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+  window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
   window.requestAnimationFrame = requestAnimationFrame;
 
   var CustomerGauge = {
@@ -151,19 +151,19 @@ window.onload = function(){
       return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
     },
     easeOutElastic: function (t, b, c, d) {
-        var s=1.70158;
-        var p=0;
-        var a=c;
-        if (t==0) return b;  
-        if ((t/=d)==1) return b+c;  
-        if (!p) p=d*.3;
-        if (a < Math.abs(c)) {
-            a=c; 
-            var s=p/4; 
-        }else{
-            var s = p/(2*Math.PI) * Math.asin (c/a);
-        }
-        return a*Math.pow(2,-10*t) * Math.sin( (t*d-s)*(2*Math.PI)/p ) + c + b;
+      var s=1.70158;
+      var p=0;
+      var a=c;
+      if (t==0) return b;  
+      if ((t/=d)==1) return b+c;  
+      if (!p) p=d*.3;
+      if (a < Math.abs(c)) {
+        a=c; 
+        var s=p/4; 
+      }else{
+        var s = p/(2*Math.PI) * Math.asin (c/a);
+      }
+      return a*Math.pow(2,-10*t) * Math.sin( (t*d-s)*(2*Math.PI)/p ) + c + b;
     },
     newAnimationPercent: 0,
 
@@ -180,36 +180,36 @@ window.onload = function(){
     },
 
     setupMilestone1IconAnimation: function(){
-        var self = this;
+      var self = this;
 
-        if(typeof this.iconAnimationStartTime === 'undefined'){
-          this.iconAnimationStartTime = new Date().getTime();
-        }
-        var time = new Date().getTime() - this.iconAnimationStartTime;
-        if (time <= this.iconDuration) {
-          var x = this.easeOutElastic(time, 10, 20, this.iconDuration);
-          var m1IconFontSize = Math.ceil(32/(32/x));
-          self.m1IconFontSize = m1IconFontSize;
-          this.milestone1AnimationStarted = true;
-        }else{
-          this.milestone1AnimationFinished = true;
-        }
+      if(typeof this.iconAnimationStartTime === 'undefined'){
+        this.iconAnimationStartTime = new Date().getTime();
+      }
+      var time = new Date().getTime() - this.iconAnimationStartTime;
+      if (time <= this.iconDuration) {
+        var x = this.easeOutElastic(time, 10, 20, this.iconDuration);
+        var m1IconFontSize = Math.ceil(32/(32/x));
+        self.m1IconFontSize = m1IconFontSize;
+        this.milestone1AnimationStarted = true;
+      }else{
+        this.milestone1AnimationFinished = true;
+      }
     },
     setupMilestone2IconAnimation: function(){
-        var self = this;
+      var self = this;
 
-        if(typeof this.icon2AnimationStartTime === 'undefined'){
-          this.icon2AnimationStartTime = new Date().getTime();
-        }
-        var time = new Date().getTime() - this.icon2AnimationStartTime;
-        if (time <= this.iconDuration) {
-          var x = this.easeOutElastic(time, 10, 20, this.iconDuration);
-          var m2IconFontSize = Math.ceil(32/(32/x));
-          self.m2IconFontSize = m2IconFontSize;
-          this.milestone2AnimationStarted = true;
-        }else{
-          this.milestone2AnimationFinished = true;
-        }
+      if(typeof this.icon2AnimationStartTime === 'undefined'){
+        this.icon2AnimationStartTime = new Date().getTime();
+      }
+      var time = new Date().getTime() - this.icon2AnimationStartTime;
+      if (time <= this.iconDuration) {
+        var x = this.easeOutElastic(time, 10, 20, this.iconDuration);
+        var m2IconFontSize = Math.ceil(32/(32/x));
+        self.m2IconFontSize = m2IconFontSize;
+        this.milestone2AnimationStarted = true;
+      }else{
+        this.milestone2AnimationFinished = true;
+      }
     },
     getAnimationFinished: function(){
       if(this.milestone1AnimationStarted && !this.milestone1AnimationFinished){
